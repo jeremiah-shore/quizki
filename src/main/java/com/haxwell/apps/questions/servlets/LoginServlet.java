@@ -87,19 +87,15 @@ public class LoginServlet extends AbstractHttpServlet {
 		}
 		else {
 			log.log(Level.FINER, "..creating the UsernamePasswordToken");
-
 			UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 			
 			log.log(Level.FINER, "..calling SecurityUtils.getSubject()");
-			
 			Subject currentUser = SecurityUtils.getSubject(); // Each time we need the Shiro subject, we get it this way..
-			
+			log.log(Level.FINER, "..got the Subject from Shiro. ('" + currentUser.toString() + "')");
+
 			log.log(Level.FINER, "..getting Session from the request");
-			
 			HttpSession session = request.getSession();
 
-			log.log(Level.FINER, "..got the Subject from Shiro. ('" + currentUser.toString() + "')");
-			
 			try {
 				log.log(Level.FINER, "..about to get user object for [" + username + "]");
 				User user = UserManager.getUser(username);
@@ -116,17 +112,13 @@ public class LoginServlet extends AbstractHttpServlet {
 				
 				fwdPage = (String)session.getAttribute("originallyRequestedPage");				
 			}
-			catch (AuthenticationException ae)
-			{
+			catch (AuthenticationException ae) {
 				log.log(Level.FINER, "..OH NO! An AuthenticationException!!");
-				
 				ae.printStackTrace();
-				
 				fwdPage = "/failedLogin.jsp";
 			}
 			
-			if (StringUtil.isNullOrEmpty(fwdPage))
-			{
+			if (StringUtil.isNullOrEmpty(fwdPage)) {
 				log.log(Level.FINER, "..nothing set for originallyRequestedPage, so fwd to index.jsp");
 				fwdPage = "/index.jsp";
 			}
